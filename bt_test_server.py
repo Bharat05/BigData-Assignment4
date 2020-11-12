@@ -1,3 +1,4 @@
+#   !/home/dev/anaconda3/bin/python
 """ Server for multithreated (asynchronous chat) application 
 Adapted from https://medium.com/swlh/lets-write-a-chat-app-in-python-f6783a9ac170"""
 
@@ -36,9 +37,13 @@ def handle_client(client):  # Takes client socket as argument.
             broadcast(msg, time.ctime() + ' ' + name + ": ")
         else:
             client.send(bytes("quit", "utf8"))
+            client.shutdown(1)
             client.close()
+            client_address = addresses[client]
             del clients[client]
+            del addresses[client]
             broadcast(bytes(f"{name} has left the chat.", "utf8"))
+            print(f"{name} from {client_address} has left the chat.")
             break
 
 
@@ -55,6 +60,7 @@ addresses = {}
 
 HOST = socket.gethostbyname(socket.gethostname())
 PORT = 33000
+print(socket.gethostname(),HOST,PORT)
 BUFSIZ = 1024
 ADDR = (HOST, PORT)
 SERVER = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

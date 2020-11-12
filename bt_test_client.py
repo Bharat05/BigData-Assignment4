@@ -1,3 +1,4 @@
+#  !/home/dev/anaconda3/bin/python
 """Script for Tkinter GUI chat client 
 Adapted from https://medium.com/swlh/lets-write-a-chat-app-in-python-f6783a9ac170"""
 
@@ -34,6 +35,13 @@ def on_closing(event=None):
     my_msg.set("quit")
     send()
 
+def myquit():
+    print('Quit Handler')
+    client_socket.send(bytes('quit', "utf8"))
+    client_socket.shutdown(1)
+    client_socket.close()
+    top.protocol("WM_DELETE_WINDOW", on_closing)
+    exit()
 
 top = tkinter.Tk()
 top.title("Chatter")
@@ -45,7 +53,7 @@ my_msg.set("Type your messages here.")
 scrollbar = tkinter.Scrollbar(messages_frame)
 # Following will contain the messages.
 msg_list = tkinter.Listbox(messages_frame, height=15,
-                           width=50, yscrollcommand=scrollbar.set)
+                           width=128, yscrollcommand=scrollbar.set)
 scrollbar.pack(side=tkinter.RIGHT, fill=tkinter.Y)
 msg_list.pack(side=tkinter.LEFT, fill=tkinter.BOTH)
 msg_list.pack()
@@ -56,6 +64,8 @@ entry_field.bind("<Return>", send)
 entry_field.pack()
 send_button = tkinter.Button(top, text="Send", command=send)
 send_button.pack()
+exit_button = tkinter.Button(top, text="Quit", command=myquit)
+exit_button.pack()
 
 top.protocol("WM_DELETE_WINDOW", on_closing)
 
@@ -63,6 +73,7 @@ top.protocol("WM_DELETE_WINDOW", on_closing)
 # HOST = socket.gethostbyname(socket.gethostname())
 # PORT = 33000
 HOST = input('Enter host: ')
+HOST = socket.gethostbyname(HOST)
 PORT = input('Enter port: ')
 if not PORT:
     PORT = 33000
@@ -71,6 +82,8 @@ else:
 
 BUFSIZ = 1024
 ADDR = (HOST, PORT)
+
+print(ADDR)
 
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.connect(ADDR)
