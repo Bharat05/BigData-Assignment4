@@ -12,14 +12,14 @@ HOST = ''
 PORT = 33000
 BUFSIZ = 1024
 ADDR = (HOST, PORT)
-SOCKET = socket(AF_INET, SOCK_STREAM)  # should we call this socket?
-SOCKET.bind(ADDR)
+SERVER = socket(AF_INET, SOCK_STREAM)  # should we call this socket?
+SERVER.bind(ADDR)
 
 
 def accept_incoming_connections():
     """Sets up handling for incoming clients."""
     while True:
-        client, client_address = SOCKET.accept()
+        client, client_address = SERVER.accept()
         print(f"{client_address} has connected.")
         client.send(bytes("Greetings from Houston!"
                           "Please type your name and press enter!",
@@ -60,6 +60,3 @@ if __name__ == "__main__":
     ACCEPT_THREAD.start()
     ACCEPT_THREAD.join()
     SOCKET.close()
-
-
-
