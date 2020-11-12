@@ -1,6 +1,8 @@
-""" Server for multithreated (asynchronous chat) application """
+""" Server for multithreated (asynchronous chat) application 
+Adapted from https://medium.com/swlh/lets-write-a-chat-app-in-python-f6783a9ac170"""
 
-from socket import AF_INET, socket, SOCK_STREAM
+import socket
+# from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
 
 
@@ -8,11 +10,12 @@ from threading import Thread
 clients = {}
 addresses = {}
 
-HOST = ''
+HOST = socket.gethostbyname(socket.gethostname())
 PORT = 33000
 BUFSIZ = 1024
 ADDR = (HOST, PORT)
-SERVER = socket(AF_INET, SOCK_STREAM)  # should we call this socket?
+# should we call this socket?
+SERVER = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 SERVER.bind(ADDR)
 
 
@@ -54,9 +57,9 @@ def broadcast(msg, prefix=""):  # prefix is for name identification
 
 
 if __name__ == "__main__":
-    SOCKET.listen(5)  # Listens for 5 Connections
+    SERVER.listen(5)  # Listens for 5 Connections
     print("Waiting for connection...")
     ACCEPT_THREAD = Thread(target=accept_incoming_connections)
     ACCEPT_THREAD.start()
     ACCEPT_THREAD.join()
-    SOCKET.close()
+    SERVER.close()
