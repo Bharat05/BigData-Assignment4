@@ -24,14 +24,14 @@ def send(event=None):  # event is passed by binders.
     msg = my_msg.get()
     my_msg.set("")  # Clears input field.
     client_socket.send(bytes(msg, "utf8"))
-    if msg == "{quit}":
+    if msg == "quit":
         client_socket.close()
         top.quit()
 
 
 def on_closing(event=None):
     """This function is to be called when the window is closed."""
-    my_msg.set("{quit}")
+    my_msg.set("quit")
     send()
 
 
@@ -60,6 +60,8 @@ send_button.pack()
 top.protocol("WM_DELETE_WINDOW", on_closing)
 
 #----Now comes the sockets part----
+# HOST = socket.gethostbyname(socket.gethostname())
+# PORT = 33000
 HOST = input('Enter host: ')
 PORT = input('Enter port: ')
 if not PORT:

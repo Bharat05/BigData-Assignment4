@@ -4,13 +4,14 @@ Adapted from https://medium.com/swlh/lets-write-a-chat-app-in-python-f6783a9ac17
 import socket
 # from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
+import time
 
 
 def accept_incoming_connections():
     """Sets up handling for incoming clients."""
     while True:
         client, client_address = SERVER.accept()
-        print("%s:%s has connected." % client_address)
+        print(f"{client_address} has connected.")
         client.send(
             bytes("Greetings from the cave! Now type your name and press enter!", "utf8"))
         addresses[client] = client_address
@@ -21,21 +22,23 @@ def handle_client(client):  # Takes client socket as argument.
     """Handles a single client connection."""
 
     name = client.recv(BUFSIZ).decode("utf8")
-    welcome = 'Welcome %s! If you ever want to quit, type {quit} to exit.' % name
+    welcome = f"Welcome {name}! If you ever want to quit, type 'quit' to exit."
     client.send(bytes(welcome, "utf8"))
-    msg = "%s has joined the chat!" % name
-    broadcast(bytes(msg, "utf8"))
     clients[client] = name
+    client_count = len(clients)
+    msg = f"{name} has just been connected. Total connections is {client_count}."
+    broadcast(bytes(msg, "utf8"))
 
     while True:
         msg = client.recv(BUFSIZ)
-        if msg != bytes("{quit}", "utf8"):
-            broadcast(msg, name + ": ")
+        if msg != bytes("quit", "utf8"):
+
+            broadcast(msg, time.ctime() + ' ' + name + ": ")
         else:
-            client.send(bytes("{quit}", "utf8"))
+            client.send(bytes("quit", "utf8"))
             client.close()
             del clients[client]
-            broadcast(bytes("%s has left the chat." % name, "utf8"))
+            broadcast(bytes(f"{name} has left the chat.", "utf8"))
             break
 
 
